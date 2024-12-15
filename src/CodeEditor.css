@@ -1,0 +1,26 @@
+/* .code-editor {
+    margin: 20px 0;
+  } */
+  
+  .run-button {
+    margin-top: 10px;
+    padding: 10px 20px;
+    background-color: #007acc;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .run-button:hover {
+    background-color: #005f99;
+  }
+  .code-editor .cm-editor {
+    height: 300px;  /* Set the default height to 300px */
+    width: 100%;    /* Make it responsive */
+    /* border-radius: 20px; */
+  }
+
+  
