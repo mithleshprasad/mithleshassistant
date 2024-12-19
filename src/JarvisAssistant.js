@@ -190,14 +190,16 @@ const MithleshAssistant = () => {
   const [userName, setUserName] = useState("Mithlesh");
   const [darkMode, setDarkMode] = useState(false);
   const [batteryLevel, setBatteryLevel] = useState(null);
+  const [routines, setRoutines] = useState([]);
 
   useEffect(() => {
     const storedName = localStorage.getItem("userName");
     if (storedName) setUserName(storedName);
-    speak(`Initializing AI Assistant for ${storedName || "you"}...`);
+    speak(`Initializing Jarvis Assistant for ${storedName || "you"}...`);
     wishMe();
+    startRoutineCheck();
   }, []);
-
+  
   const speak = (text) => {
     const textSpeak = new SpeechSynthesisUtterance(text);
     textSpeak.rate = 1;
@@ -205,7 +207,33 @@ const MithleshAssistant = () => {
     textSpeak.pitch = 2;
     window.speechSynthesis.speak(textSpeak);
   };
-
+  const addRoutine = () => {
+    const name = prompt("Enter routine name:");
+    const time = prompt("Enter routine time in HH:MM format (24-hour):");
+    const description = prompt("Enter routine description:");
+    if (name && time && description) {
+      const newRoutine = { name, time, description };
+      const updatedRoutines = [...routines, newRoutine];
+      setRoutines(updatedRoutines);
+      localStorage.setItem("routines", JSON.stringify(updatedRoutines));
+      speak(`Routine ${name} added successfully.`);
+    }
+  };
+  const startRoutineCheck = () => {
+    setInterval(() => {
+      const now = new Date();
+      const currentTime = `${now.getHours().toString().padStart(2, "0")}:${now
+        .getMinutes()
+        .toString()
+        .padStart(2, "0")}`;
+      routines.forEach((routine) => {
+        if (routine.time === currentTime) {
+          speak(`Reminder: ${routine.name} - ${routine.description}`);
+          setContent(`Routine Reminder: ${routine.name}`);
+        }
+      });
+    }, 60000); // Check every minute
+  };
   const wishMe = () => {
     const hour = new Date().getHours();
     if (hour >= 0 && hour < 12) {
@@ -283,17 +311,18 @@ const MithleshAssistant = () => {
     speak(`Today's date is ${date}`);
     setContent(`Today's Date: ${date}`);
   };
-
   const setReminder = () => {
     const task = prompt("What would you like me to remind you about?");
     if (task) {
       setTimeout(() => {
         speak(`Reminder: ${task}`);
-        setContent(`Reminder: ${task}`);
+        alert(`Reminder: ${task}`);
       }, 5000); // Reminder in 5 seconds for demo
       speak(`Reminder set for: ${task}`);
     }
   };
+  
+
 
   const calculate = (query) => {
     try {
@@ -321,44 +350,54 @@ const MithleshAssistant = () => {
     speak("Sorry, I cannot lock your phone, but you can manually lock it for security.");
     setContent("Locking the phone is not supported via web.");
   };
-
   const takeCommand = (message) => {
-    if (message.includes("hey") || message.includes("hello")) {
-      speak(`Hello ${userName}, how may I assist you?`);
-    } else if (message.includes("your name")) {
-      speak(`I am AI Assistant, your virtual AI helper.`);
-    } else if (message.includes("joke")) {
-      tellJoke();
-    } else if (message.includes("weather")) {
-      getWeather();
-    } else if (message.includes("news")) {
-      fetchNews();
-    } else if (message.includes("motivation")) {
-      fetchMotivation();
-    } else if (message.includes("time")) {
-      getCurrentTime();
-    } else if (message.includes("battery")) {
-      checkBatteryLevel();
-    } else if (message.includes("lock phone")) {
-      lockPhone();
-    }else if (message.includes("date")) {
-      getCurrentDate();
-    } else if (message.includes("reminder")) {
-      setReminder();
-    } else if (message.includes("calculator")) {
-      const query = message.replace("calculator", "").trim();
+    const lowerMessage = message.toLowerCase().trim();
+  
+    const actions = {
+      "hey": () => speak(`Hello ${userName}, how may I assist you?`),
+      "hello": () => speak(`Hello ${userName}, how may I assist you?`),
+      "your name": () => speak(`I am AI Assistant, your virtual AI helper.`),
+      "joke": tellJoke,
+      "weather": getWeather,
+      "news": fetchNews,
+      "motivation": fetchMotivation,
+      "time": getCurrentTime,
+      "battery": checkBatteryLevel,
+      "lock phone": lockPhone,
+      "date": getCurrentDate,
+      "reminder": setReminder,
+      "play music": () => {
+        window.open("https://spotify.com", "_blank");
+        speak("Playing music on Spotify.");
+      },
+      "copy": () => {
+        navigator.clipboard.writeText(content);
+        speak("Content copied to clipboard.");
+      },
+    };
+  
+    // Handle calculator command separately to extract the query
+    if (lowerMessage.includes("calculator")) {
+      const query = lowerMessage.replace("calculator", "").trim();
       calculate(query);
-    } else if (message.includes("copy")) {
-      navigator.clipboard.writeText(content);
-      speak("Content copied to clipboard.");
-    } else if (message.includes("play music")) {
-      window.open("https://spotify.com", "_blank");
-      speak("Playing music on Spotify.");
-    } else {
-      window.open(`https://www.google.com/search?q=${message.replace(" ", "+")}`, "_blank");
-      speak(`Here is what I found for ${message}`);
+      return;
     }
+  
+    // Find and execute the appropriate action
+    for (const key in actions) {
+      if (lowerMessage.includes(key)) {
+        actions[key]();
+        return;
+      }
+    }
+  
+    // Fallback: Open Google search for unknown commands
+    const searchQuery = encodeURIComponent(lowerMessage);
+    window.open(`https://www.google.com/search?q=${searchQuery}`, "_blank");
+    speak(`Here is what I found for ${message}`);
   };
+  
+ 
 
   const startListening = () => {
     const SpeechRecognition =
@@ -406,8 +445,8 @@ const MithleshAssistant = () => {
         className="img-fluid mb-4"
         style={{ maxWidth: "200px" }}
       />
-      <h1 className="card-title display-4 text-primary">AI Assistant</h1>
-      <p className="lead">I'm your virtual assistant, how may I help you?</p>
+      <h1 className="card-title display-4 text-primary">Jarvis Assistant</h1>
+      <p className="lead">I'm your Jarvis assistant, how may I help you?</p>
       <div className="mt-3 border-dark">
             <h3 className="text-dark">{content}</h3>
            </div>
@@ -418,7 +457,23 @@ const MithleshAssistant = () => {
         <button className="btn btn-secondary btn-lg ms-3" onClick={updateUserName}>
           Update Name
         </button>
-        
+          <button className="btn btn-light text-light bg-dark btn-lg ms-3" onClick={setReminder}>
+              Set Reminder
+            </button>
+            <button className="btn btn-primary btn-lg" onClick={addRoutine}>
+              Add Routine
+            </button>
+            <div className="mt-4">
+            <h4>Your Routines:</h4>
+            <ul className="list-group">
+              {routines.map((routine, index) => (
+                <li key={index} className="list-group-item">
+                  <strong>{routine.name}</strong> - {routine.time} - {routine.description}
+                </li>
+              ))}
+            </ul>
+          </div>
+     
       </div>
     </div>
   </div>
