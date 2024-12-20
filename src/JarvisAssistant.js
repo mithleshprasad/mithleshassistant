@@ -5,6 +5,10 @@ import "./App.css";
 import giphy from "./assists/giphy.gif";
 import Mithlesh from "./assists/mithlesh.jpeg";
 import Faq from "./Faq"
+import { AiFillAudio } from "react-icons/ai";
+import { IoPersonSharp } from "react-icons/io5";
+import { FaBell } from "react-icons/fa6";
+import { MdRememberMe } from "react-icons/md";
 
 const MithleshAssistant = () => {
   const [content, setContent] = useState("Click the button to speak");
@@ -231,35 +235,38 @@ const MithleshAssistant = () => {
 >
   <div className="card shadow-lg">
     <div className="d-flex text-start">
-    <Faq></Faq>
 
 
     </div>
 
     <div className="card-body">
+  
       <img
         src={giphy}
         alt="Assistant"
         className="img-fluid mb-4"
-        style={{ maxWidth: "200px" }}
+        style={{ maxWidth: "150px" }}
       />
-      <h1 className="card-title display-4 text-primary">Jarvis Assistant</h1>
-      <p className="lead">I'm your Jarvis assistant, how may I help you?</p>
+        <Faq></Faq>
+      {/* <h3 className="card-title display-4 text-primary">Jarvis Assistant    
+      </h3>  */}
+      {/* <p className="lead">I'm your Jarvis assistant, how may I help you?</p> */}
       <div className="mt-3 border-dark">
             <h3 className="text-dark">{content}</h3>
            </div>
       <div className="mt-4">
         <button className="btn btn-primary btn-lg" onClick={startListening}>
-          <i className="fas fa-microphone-alt"></i> Spk
+        <AiFillAudio />
+        
         </button>
         <button className="btn btn-secondary btn-lg ms-3" onClick={updateUserName}>
-          UpN
+        <IoPersonSharp />
         </button>
           <button className="btn btn-light text-light bg-dark btn-lg ms-3" onClick={setReminder}>
-              Rem
-            </button>
+          <FaBell />
+          </button>
             <button className="btn btn-primary btn-lg ms-3" onClick={addRoutine}>
-              Rtne
+            <MdRememberMe />
             </button>
             <div className="mt-4">
             <h4>Your Routines:</h4>

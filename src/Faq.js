@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { FaQuestion } from "react-icons/fa";
 
 const JarvisFAQ = () => {
   const [showModal, setShowModal] = useState(false);
@@ -32,9 +33,7 @@ const JarvisFAQ = () => {
 
   return (
     <div className="container mt-5">
-      <button className="btn btn-primary" onClick={handleOpenModal}>
-         FAQ
-      </button>
+            <FaQuestion onClick={handleOpenModal}/>
 
       {showModal && (
         <div className="modal show d-block" tabIndex="-1" role="dialog">
