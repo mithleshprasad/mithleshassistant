@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bestie Forever</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(to bottom, #ff9a9e, #fad0c4);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            color: #fff;
+            overflow: hidden;
+        }
+        .container {
+            text-align: center;
+        }
+        h1 {
+            font-size: 3.5em;
+            margin-bottom: 10px;
+            animation: fadeIn 2s ease-in-out;
+        }
+        p {
+            font-size: 1.8em;
+            margin: 20px 0;
+            animation: fadeIn 3s ease-in-out;
+        }
+        .button-container {
+            margin-top: 30px;
+            animation: fadeIn 4s ease-in-out;
+        }
+        .btn {
+            background: #ffffff;
+            color: #ff9a9e;
+            border: none;
+            border-radius: 30px;
+            padding: 15px 40px;
+            font-size: 1.3em;
+            cursor: pointer;
+            margin: 10px;
+            transition: transform 0.3s ease, background 0.3s ease, box-shadow 0.3s ease;
+        }
+        .btn:hover {
+            transform: scale(1.1);
+            background: #fad0c4;
+            color: #fff;
+        }
+        .btn:active {
+            box-shadow: 0 0 20px #ffffff;
+        }
+        .stars {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            pointer-events: none;
+        }
+        .star {
+            width: 10px;
+            height: 10px;
+            background: #fff;
+            position: absolute;
+            animation: twinkle 3s linear infinite;
+            border-radius: 50%;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes twinkle {
+            0% { opacity: 0.5; transform: scale(0.9); }
+            50% { opacity: 1; transform: scale(1.1); }
+            100% { opacity: 0.5; transform: scale(0.9); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Best Friends Forever!</h1>
+        <p>You are the peanut butter to my jelly, the sun to my shine, and my bestie for life!</p>
+        <div class="button-container">
+            <button class="btn" onclick="playJarvisMessage()">You're the Best!</button>
+            <button class="btn" onclick="playPlayfulSound()">No Way!</button>
+            <button class="btn" onclick="showQuiz()">Prove Your Friendship!</button>
+            <button class="btn" onclick="showMemoryLane()">Memory Lane</button>
+        </div>
+    </div>
+    <div class="stars"></div>
+
+    <script>
+        // Create twinkling stars
+        const starsContainer = document.querySelector('.stars');
+        function createStar() {
+            const star = document.createElement('div');
+            star.classList.add('star');
+            star.style.left = Math.random() * 100 + 'vw';
+            star.style.top = Math.random() * 100 + 'vh';
+            star.style.animationDuration = Math.random() * 2 + 1 + 's';
+            starsContainer.appendChild(star);
+            setTimeout(() => star.remove(), 3000);
+        }
+        setInterval(createStar, 150);
+
+        // Base64-encoded audio data
+        const jarvisAudioData = "data:audio/mp3;base64,//uQxAA=="; // Add real Base64 data for Jarvis sound
+        const playfulAudioData = "data:audio/mp3;base64,//uQxAA=="; // Add real Base64 data for playful sound
+
+        // Load audio objects
+        const jarvisSound = new Audio(jarvisAudioData);
+        const playfulSound = new Audio(playfulAudioData);
+
+        // Button click actions with sounds
+        function playJarvisMessage() {
+            jarvisSound.play();
+            alert('I love you, bestie forever! 💖');
+        }
+
+        function playPlayfulSound() {
+            playfulSound.play();
+            alert('Haha, as if you could get rid of me! 😂');
+        }
+
+        function showQuiz() {
+            const answer = prompt("What’s our favorite hangout spot?");
+            if (answer && answer.toLowerCase() === "cafe bliss") {
+                alert("You know me so well! You’re truly the best! 🥰");
+            } else {
+                alert("Hmm, close but not quite! Try again next time. 😄");
+            }
+        }
+
+        function showMemoryLane() {
+            const memories = [
+                "Remember the time we laughed until our stomachs hurt?",
+                "That trip to the beach was unforgettable!",
+                "Who can forget our late-night snack adventures?",
+                "Our silly selfies are legendary!",
+                "Every moment with you is a cherished memory!"
+            ];
+            const randomMemory = memories[Math.floor(Math.random() * memories.length)];
+            alert(randomMemory);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,381 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chatbot</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        #chat-container {
+            width: 400px;
+            height: 600px;
+            border-radius: 10px;
+            background-color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        #header {
+            background-color: #25d366;
+            padding: 15px;
+            color: white;
+            font-weight: bold;
+            font-size: 18px;
+            text-align: center;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        #messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 10px;
+            margin-top: 10px;
+            background-color: #f9f9f9;
+        }
+        .message {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 10px;  /* Add some space between messages */
+}
+
+/* Style for the message text */
+.message .text {
+    font-size: 16px;
+    color: #333;
+    margin-bottom: 5px; /* Space between the text and the time */
+}
+        .message {
+            padding: 10px;
+            border-radius: 15px;
+            max-width: 75%;
+            margin-bottom: 10px;
+            display: inline-block;
+            clear: both;
+            position: relative;
+        }
+
+        .user {
+            background-color: #dcf8c6;
+            text-align: right;
+            float: right;
+        }
+
+        .bot {
+            background-color: #ffffff;
+            border: 1px solid #e5e5e5;
+            text-align: left;
+            float: left;
+        }
+
+        #user-input {
+            border: 1px #000 sold !important;
+    outline: none;
+    font-size: 16px;
+    padding: 10px;
+    border-radius: 20px;
+    width: calc(100% - 60px);
+        }
+
+        #send-btn {
+            background-color: #25d366;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10%;
+            cursor: pointer;
+         
+            bottom: 10px;
+        }
+
+        #send-btn:hover {
+            background-color: #128c7e;
+        }
+
+        #bot-typing {
+            display: none;
+            color: #211e1e;
+            font-size: 12px;
+            margin-top: -5px;
+            margin-left: 2px;
+        }
+
+        #footer {
+            padding: 10px;
+            background-color: #e4dddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-top: 1px solid #e5e5e5;
+        }
+        .message .time {
+    font-size: 12px; /* Smaller size for the time */
+    color: #888; /* Lighter color for the time */
+    text-align: right; /* Position the time at the bottom */
+    margin-left: 5px;
+}
+        #footer input {
+            border: none;
+            outline: none;
+            font-size: 16px;
+            padding: 10px;
+            border-radius: 20px;
+            width: calc(100% - 60px);
+        }
+        .clean{
+            height: 20px;
+            width: 20px;
+            margin: 2px;
+        }
+        #clearbtn{
+            background: #25d366;
+            border-radius: 23%;
+        }
+    </style>
+</head>
+<body>
+    <div id="chat-container">
+        <div id="header">
+            <span>Chat with Jarvis</span>
+            <button id="clearbtn">   <img  class="clean" src="./clear.svg"></button>
+         
+
+        </div>
+        <div id="messages">
+            <!-- Chat messages will go here -->
+        </div>
+        <div id="bot-typing">typing...</div>
+        <div id="footer">
+            <input type="text" id="user-input" placeholder="Type a message..." />
+            <button id="send-btn">Send</button>
+        </div>
+    </div>
+
+    <script>
+        // Predefined responses for the chatbot
+       // Predefined responses for the chatbot with added variations and dynamic functions
+// Predefined responses for the chatbot with added variations and dynamic functions
+const responses = {
+    "hello": "Hi! How can I assist you today?",
+    "how are you": "I'm doing great, thank you!",
+    "what is your name": "I'm Jarvis, your friendly chatbot.",
+    "bye": "Goodbye! Have a great day!",
+    "tell me a joke": "Why don’t skeletons fight each other? They don’t have the guts!",
+    "how old are you": "I don't age. I'm timeless!",
+    "what can you do": "I can assist with various tasks! Just ask away.",
+    "hi": "Hello! How can I help you?",
+    "good morning": "Good morning! How can I assist you today?",
+    "thank you": "You're welcome! Let me know if you need anything else.",
+    "good night": "Good night! Sweet dreams!",
+    "who made you": "I was created by an awesome developer Mithlesh! You can thank them later!",
+    "what's the weather": "I can't check the weather right now, but you can try a weather app!",
+    "give me a quote": "The only way to do great work is to love what you do. - Steve Jobs",
+    "search for": "Searching for your query... Unfortunately, I can't search right now, but you can try Google!",
+    "what is the time": "I can't tell the exact time, but you can check the time on your device!",
+    "how do you work": "I work by analyzing your messages and providing responses based on predefined rules.",
+    "do you have a hobby": "I don’t have hobbies, but I love helping you with anything you need!",
+    "can you play music": "I can’t play music, but I can recommend great songs if you want!",
+    "can you make coffee": "I can't make coffee, but I can suggest a great coffee recipe!",
+    "what is your favorite color": "I don't have preferences, but I can tell you about popular colors!",
+    "are you a robot": "I am a chatbot, not a robot, but I can assist you like one!",
+    "do you know any languages": "I can understand and respond in English, but I am learning new languages every day!",
+    "what is AI": "Artificial Intelligence is the simulation of human intelligence in machines.",
+    "can you solve math problems": "Yes, I can help you with basic math problems!",
+    "what is the capital of France": "The capital of France is Paris.",
+    "what is 2 + 2": "2 + 2 is 4.",
+    "who is the president of the US": "As of now, Joe Biden is the President of the United States.",
+    "what is your favorite book": "I don't read books, but I can suggest some popular ones if you like!",
+    "do you like pizza": "I don't eat, but I know that pizza is a favorite for many!",
+    "can you answer questions": "Yes, I am here to help with any questions you have!",
+    "how do you feel": "I don't have feelings, but I'm here to help however I can!",
+    "are you real": "I’m real in the sense that I can communicate with you, but I’m just a program!",
+    "can you tell a story": "Sure! Would you like to hear a story? Let me know!",
+    "what is the meaning of life": "The meaning of life is different for everyone, but it’s about finding purpose and happiness.",
+    "can you understand feelings": "I can't feel emotions, but I can understand how emotions work and help you process them.",
+    "what do you think about humans": "Humans are fascinating! I’m here to assist and learn more about you.",
+    "can you help with coding": "Absolutely! I can help you with coding questions in various languages.",
+    "can you draw pictures": "I can't draw, but I can help you with creating art with code or design ideas!",
+    "how do I become a programmer": "You can start by learning a programming language like Python or JavaScript. Practice is key!",
+    "how do I make a website": "To make a website, you can start with HTML, CSS, and JavaScript. Many tools can help you design and code!",
+    "what is html": "HTML stands for HyperText Markup Language and is used to structure content on the web.",
+    "what is css": "CSS is a style sheet language used to describe the presentation of a document written in HTML.",
+    "what is JavaScript": "JavaScript is a programming language used to create dynamic and interactive effects within web browsers.",
+    "what is React": "React is a JavaScript library used for building user interfaces, especially for single-page applications.",
+    "who invented the internet": "The internet was invented by Tim Berners-Lee in the late 1980s.",
+    "can you help me learn React": "I’d love to help you with React! There are plenty of tutorials and resources to start learning!",
+    "can you help me learn JavaScript": "Yes, I can guide you through learning JavaScript, from basics to advanced concepts.",
+    "can you teach me math": "Sure! What specific area of math would you like help with?",
+    "what is 5 times 6": "5 times 6 is 30.",
+    "what is the square root of 25": "The square root of 25 is 5.",
+    "can you play games": "I can't play games, but I can help you find some great games to play!",
+    "what is your favorite movie": "I don’t have preferences, but I know many popular movies. Want a recommendation?",
+    "can you recommend a book": "Sure! If you enjoy fantasy, try reading 'The Hobbit' by J.R.R. Tolkien.",
+    "do you know about space": "Yes! Space is vast and full of fascinating things. What would you like to know?",
+    "how big is the universe": "The universe is unimaginably large, with no known boundaries or edges.",
+    "what is a black hole": "A black hole is a region in space where the gravitational pull is so strong that not even light can escape.",
+    "can you solve riddles": "I can try! Want to give me a riddle?",
+    "what is your favorite animal": "I don’t have preferences, but I can tell you about all kinds of animals!",
+    "can you understand jokes": "I can understand jokes and even tell some of my own!",
+    "what is the best way to learn a new skill": "The best way is through consistent practice and using various learning resources.",
+    "how can I be more productive": "Try setting clear goals, minimizing distractions, and taking regular breaks to stay productive.",
+    "do you like movies": "I don’t watch movies, but I know many that people love!",
+    "how do I improve my health": "Exercise, eat balanced meals, get enough sleep, and manage stress for better health.",
+    "what is a good exercise routine": "A good routine includes cardio, strength training, and flexibility exercises.",
+    "what is meditation": "Meditation is a practice to focus the mind and promote relaxation and stress reduction.",
+    "can you talk about history": "Sure! History is fascinating. What period or event would you like to know about?",
+    "how do I stay motivated": "Set achievable goals, reward yourself for progress, and stay positive.",
+    "how do I improve my writing skills": "Read more, write regularly, and get feedback on your work to improve your writing.",
+    "can you teach me science": "Of course! What area of science are you interested in?",
+    "what is the water cycle": "The water cycle describes how water evaporates, condenses, and precipitates in a continuous process.",
+    "how does the human brain work": "The brain processes information, controls bodily functions, and enables thinking and emotions.",
+    "what is DNA": "DNA (Deoxyribonucleic Acid) is the molecule that carries genetic information in living organisms.",
+    "can you talk about the future": "The future is unpredictable, but it’s exciting! What part of the future would you like to discuss?",
+    "how do I travel to space": "Space travel requires advanced technology, spacecraft, and training. It's currently done by astronauts.",
+    "what is the internet of things": "The Internet of Things (IoT) refers to devices connected to the internet that communicate and share data.",
+    "what is virtual reality": "Virtual Reality (VR) is a technology that creates simulated environments where users can interact.",
+    "can you predict the future": "I can't predict the future, but I can share trends and possibilities based on data.",
+    "do you like books": "I don't read books, but I know a lot about them. Want a recommendation?",
+    "how do you learn": "I learn through patterns and predefined responses, but I continue to improve with more data.",
+    "can you help me with homework": "Sure! What subject do you need help with?",
+    "what is your favorite game": "I don't play games, but I can suggest some popular ones!",
+    "how can I be more creative": "Try exploring new hobbies, challenging yourself, and thinking outside the box.",
+    "can you write a poem": "I can certainly try! Here's a quick one: 'The stars above, the moon so bright, guide our way through darkest night.'",
+    "what is the meaning of success": "Success means achieving your goals, but it can look different for everyone."
+};
+
+
+// Function to get current time in a readable format (e.g., 12:45 PM)
+function getCurrentTime() {
+    const date = new Date();
+    const hours = date.getHours();
+    const minutes = date.getMinutes();
+    const ampm = hours >= 12 ? 'PM' : 'AM';
+    const formattedTime = `${(hours % 12) || 12}:${minutes < 10 ? '0' + minutes : minutes} ${ampm}`;
+    return formattedTime;
+}
+
+// Function to display messages in the chat
+function displayMessage(message, sender) {
+    const messageContainer = document.createElement("div");
+    messageContainer.classList.add("message", sender);
+    
+    const text = document.createElement("span");
+    text.classList.add("text");
+    text.textContent = message;  // Add the message text
+
+    const time = document.createElement("span");
+    time.classList.add("time");
+    time.textContent = getCurrentTime();  // Add time to message
+    
+    // Append the text first, then the time at the bottom
+    messageContainer.appendChild(text);
+    messageContainer.appendChild(time);
+
+    // Append the message to the chat
+    document.getElementById("messages").appendChild(messageContainer);
+
+    // Scroll to the latest message
+    document.getElementById("messages").scrollTop = document.getElementById("messages").scrollHeight;
+}
+
+
+// Function to save chat history in local storage
+function saveChatHistory() {
+    const messages = document.getElementById("messages").children;
+    const chatHistory = [];
+    for (let message of messages) {
+        const time = message.querySelector(".time").textContent;
+        const text = message.querySelector(".text").textContent;
+        const sender = message.classList.contains("user") ? "user" : "bot";
+        chatHistory.push({ time, sender, text });
+    }
+    localStorage.setItem("chatHistory", JSON.stringify(chatHistory));  // Save to local storage
+}
+
+// Function to load chat history from local storage
+function loadChatHistory() {
+    const chatHistory = JSON.parse(localStorage.getItem("chatHistory"));
+    if (chatHistory) {
+        for (let msg of chatHistory) {
+            displayMessage(msg.text, msg.sender);
+        }
+    }
+}
+
+// Function to send messages
+function sendMessage() {
+    const inputField = document.getElementById("user-input");
+    const userMessage = inputField.value.trim().toLowerCase();
+    if (userMessage) {
+        displayMessage(userMessage, "user");
+
+        // Show bot typing animation
+        const botTypingIndicator = document.getElementById("bot-typing");
+        botTypingIndicator.style.display = "block";
+
+        setTimeout(() => {
+            let botResponse = responses[userMessage] || "Sorry, I didn't understand that.";
+
+            if (typeof botResponse === "function") {
+                botResponse = botResponse(userMessage);
+            } else {
+                botResponse = Array.isArray(botResponse) ? botResponse[Math.floor(Math.random() * botResponse.length)] : botResponse;
+            }
+
+            displayMessage(botResponse, "bot");
+            botTypingIndicator.style.display = "none"; // Hide typing animation
+            inputField.value = ""; // Clear the input field
+
+            saveChatHistory(); // Save the chat history
+        }, 1000); // Simulate delay for bot's response
+    } else {
+        alert("Please enter a message.");
+    }
+}
+
+// Event listener for the send button
+document.getElementById("send-btn").addEventListener("click", sendMessage);
+
+// Event listener for Enter key press
+document.getElementById("user-input").addEventListener("keypress", function(event) {
+    if (event.key === "Enter") {
+        sendMessage();
+    }
+});
+
+// Load the chat history when the page is loaded
+window.onload = function() {
+    loadChatHistory();
+};
+// Clear chat history from local storage
+function clearChatHistory() {
+    localStorage.removeItem('chatHistory'); // Clears only the specific item, chatHistory
+    document.getElementById('messages').innerHTML = ''; // Clears chat window
+}
+
+// Event listener for the 'Clear Chat History' button
+document.getElementById('clearbtn').addEventListener('click', clearChatHistory);
+
+ 
+    </script>
+</body>
+</html>
